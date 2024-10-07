@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="viewport" content="width=device-width, initial-scale=1.0">
+    <title>月份数据</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <h1 id="month-title">月份数据</h1>
+        <p>这里将显示选定月份的账目信息。</p>
+        <!-- 你可以在这里添加更多内容来显示具体月份的数据 -->
+        <button class="button" onclick="location.href='past-data.html'">返回往月数据</button>
+    </div>
+    <script>
+        // 应用背景图片
+        document.addEventListener("DOMContentLoaded", () => {
+            const backgroundImage = localStorage.getItem('backgroundImage');
+            if (backgroundImage) {
+                document.body.style.background = `url('${JSON.parse(backgroundImage)}') no-repeat center center fixed`;
+                document.body.style.backgroundSize = 'cover';
+            }
+        });
+
+        const urlParams = new URLSearchParams(window.location.search);
+        const year = urlParams.get('year');
+        const month = urlParams.get('month');
+        document.getElementById('month-title').textContent = `${year}年${month}月的数据`;
+    </script>
+</body>
+</html>

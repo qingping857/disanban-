@@ -10,6 +10,7 @@ body {
     align-items: center;
     min-height: 100vh;
     transition: background 0.5s ease-in-out;
+    flex-direction: column; /* 确保在小屏幕上垂直排列 */
 }
 
 .container {
@@ -18,7 +19,8 @@ body {
     border-radius: 15px;
     box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
     max-width: 800px;
-    width: 90%;
+    width: 100%; /* 确保在小屏幕上占满宽度 */
+    padding: 10px; /* 减少内边距以适应小屏幕 */
 }
 
 h1 {
@@ -31,18 +33,19 @@ h1 {
     background: #fff;
     padding: 20px;
     border-radius: 10px;
-    margin-bottom: 20px;
+    margin-bottom: 15px; /* 减少卡片之间的间距 */
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
 .input-group {
     position: relative;
+    margin-bottom: 10px; /* 确保输入组之间有足够的间距 */
 }
 
 input[type="text"],
 input[type="number"],
 input[type="file"] {
-    width: calc(100% - 20px);
+    width: 100%; /* 确保输入框在小屏幕上占满宽度 */
     padding: 10px;
     margin-bottom: 10px;
     border: 1px solid #ddd;
@@ -85,11 +88,12 @@ input[type="file"] {
     display: inline-block;
     background: #ff6b81;
     color: #fff;
-    padding: 10px 20px;
+    padding: 10px;
     border: none;
     border-radius: 5px;
     cursor: pointer;
     transition: background 0.3s ease;
+    width: 100%; /* 确保按钮在小屏幕上占满宽度 */
 }
 
 .button:hover {
@@ -108,4 +112,63 @@ li {
 p {
     font-size: 1.1em;
     margin: 0;
+}
+
+.progress-bar {
+    width: 100%;
+    background-color: #e0e0e0;
+    border-radius: 5px;
+    overflow: hidden;
+    height: 20px;
+    margin-top: 5px;
+}
+
+.progress {
+    height: 100%;
+    background-color: #76c7c0;
+    width: 0; /* 初始宽度为0，稍后通过JS更新 */
+    transition: width 0.3s ease;
+}
+
+.month-link {
+    display: inline-block;
+    margin: 5px;
+    padding: 10px 15px;
+    background-color: #76c7c0;
+    color: white;
+    text-decoration: none;
+    border-radius: 5px;
+    transition: background-color 0.3s ease;
+    width: calc(50% - 10px); /* 在小屏幕上每行显示两个按钮 */
+    margin: 5px; /* 确保按钮之间有间距 */
+}
+
+.month-link:hover {
+    background-color: #5aa8a0;
+}
+
+.info-text {
+    font-size: 1em;
+    color: #555;
+    background-color: #f9f9f9;
+    padding: 10px;
+    border-left: 4px solid #76c7c0;
+    margin-bottom: 20px;
+    border-radius: 5px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    font-size: 0.9em; /* 调整提示信息的文本大小 */
+}
+
+@media (max-width: 600px) {
+    h1, h2 {
+        font-size: 1.5em; /* 调整标题大小以适应小屏幕 */
+    }
+
+    p, li {
+        font-size: 1em; /* 调整文本大小以适应小屏幕 */
+    }
+
+    .info-text {
+        font-size: 0.9em; /* 调整提示信息的文本大小 */
+    }
 }
