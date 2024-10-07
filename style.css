@@ -33,13 +33,13 @@ h1 {
     background: #fff;
     padding: 20px;
     border-radius: 10px;
-    margin-bottom: 15px; /* 减少卡片之间的间距 */
+    margin-bottom: 10px; /* 减少卡片之间的间距 */
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
 .input-group {
     position: relative;
-    margin-bottom: 10px; /* 确保输入组之间有足够的间距 */
+    margin-bottom: 8px; /* 确保输入组之间有足够的间距 */
 }
 
 input[type="text"],
@@ -170,5 +170,15 @@ p {
 
     .info-text {
         font-size: 0.9em; /* 调整提示信息的文本大小 */
+    }
+
+    input[type="text"],
+    input[type="number"],
+    input[type="file"] {
+        font-size: 1em; /* 确保输入框内的字体大小适中 */
+    }
+
+    .button {
+        font-size: 1em; /* 确保按钮内的字体大小适中 */
     }
 }
