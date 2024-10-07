@@ -12,6 +12,7 @@ document.addEventListener("DOMContentLoaded", () => {
     updateRedundancyAmount();
     updateItemTags();
     updateBudgetTags();
+    updateTotalSpent(); // 更新累计支出
     document.getElementById("redundancy-limit-display").textContent = redundancyLimit;
 });
 
@@ -41,10 +42,16 @@ function addEntry() {
         // 更新冗余库显示
         updateRedundancyAmount();
 
+        // 更新小金库金额
+        treasuryAmount = totalIncome - entries.reduce((sum, entry) => sum + entry.amount, 0);
+        treasuryAmountDisplay.textContent = treasuryAmount;
+
         // 清空输入框
         document.getElementById("item").value = '';
         document.getElementById("amount").value = '';
         document.getElementById("note").value = '';
+
+        updateTotalSpent(); // 更新累计支出
     } else {
         alert("请输入有效的账目和金额");
     }
@@ -156,8 +163,27 @@ function updateBudgetList() {
     budgetList.innerHTML = '';
 
     for (let item in budgets) {
+        let totalSpent = entries.filter(entry => entry.item === item)
+                                .reduce((sum, entry) => sum + entry.amount, 0);
+        let budgetLimit = budgets[item];
+        let displaySpent = totalSpent > budgetLimit ? budgetLimit : totalSpent;
+        let excess = totalSpent > budgetLimit ? totalSpent - budgetLimit : 0;
+
         let listItem = document.createElement('li');
-        listItem.textContent = `${item}: ¥${budgets[item]}`;
+        listItem.innerHTML = `
+            ${item}: ¥${displaySpent} / ¥${budgetLimit}
+        `;
+
+        // 如果有超出部分，计入冗余库
+        if (excess > 0) {
+            if (redundancy + excess <= redundancyLimit) {
+                redundancy += excess;
+                saveData('redundancy', redundancy);
+                alert(`项目 "${item}" 超出预算，超出部分 ¥${excess} 已记录到冗余库`);
+            } else {
+                alert("冗余库额度不足，无法记录所有超出部分！");
+            }
+        }
 
         // 添加删除按钮
         let deleteButton = document.createElement('span');
@@ -301,4 +327,88 @@ document.addEventListener("DOMContentLoaded", () => {
         document.body.style.background = `url('${JSON.parse(backgroundImage)}') no-repeat center center fixed`;
         document.body.style.backgroundSize = 'cover';
     }
+});
+
+let treasuryAmount = 0; // 小金库金额
+const treasuryAmountDisplay = document.getElementById('treasury-amount');
+const treasuryList = document.getElementById('treasury-list');
+
+let totalIncome = 0; // 累计入账金额
+
+function addIncome() {
+    let description = document.getElementById("income-description").value;
+    let amount = parseFloat(document.getElementById("income-amount").value);
+
+    if (description && !isNaN(amount) && amount > 0) {
+        // 创建新的收入项目
+        const listItem = document.createElement('li');
+        listItem.textContent = `${description}: ¥${amount}`;
+        treasuryList.appendChild(listItem);
+
+        // 更新累计入账金额和小金库金额
+        totalIncome += amount;
+        treasuryAmount = totalIncome - entries.reduce((sum, entry) => sum + entry.amount, 0);
+        treasuryAmountDisplay.textContent = treasuryAmount;
+
+        // 清空输入框
+        document.getElementById("income-description").value = '';
+        document.getElementById("income-amount").value = '';
+    } else {
+        alert("请输入有效的收入描述和金额");
+    }
+}
+
+function updateProgressBars() {
+    const budgetItems = document.querySelectorAll('.budget-item');
+    budgetItems.forEach((item, index) => {
+        const progressBar = item.querySelector('.progress');
+        const budget = budgets[index];
+        const spentPercentage = (budget.spent / budget.total) * 100;
+        progressBar.style.width = spentPercentage + '%';
+    });
+}
+
+document.addEventListener('DOMContentLoaded', updateProgressBars);
+
+function updateTotalSpent() {
+    let totalSpent = entries.reduce((sum, entry) => sum + entry.amount, 0);
+    document.getElementById("total-spent").textContent = totalSpent;
+}
+
+function saveMonthlyData() {
+    const currentDate = new Date();
+    const year = currentDate.getFullYear();
+    const month = currentDate.getMonth() + 1;
+
+    // 检查是否是每月的第一天
+    if (currentDate.getDate() === 1) {
+        const monthlyData = {
+            entries: entries,
+            budgets: budgets,
+            redundancy: redundancy
+        };
+
+        // 保存数据到 localStorage
+        localStorage.setItem(`monthlyData-${year}-${month}`, JSON.stringify(monthlyData));
+
+        // 清空当前数据
+        entries = [];
+        budgets = {};
+        redundancy = 0;
+        saveData('entries', entries);
+        saveData('budgets', budgets);
+        saveData('redundancy', redundancy);
+
+        // 更新页面显示
+        updateEntryList();
+        updateBudgetList();
+        updateRedundancyAmount();
+        updateTotalSpent();
+    }
+}
+
+// 页面加载时检查是否需要保存月数据
+document.addEventListener("DOMContentLoaded", () => {
+    saveMonthlyData();
+    // ... existing code ...
 });
