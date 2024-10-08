@@ -1,125 +1,44 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-    <meta charset="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>往月数据</title>
     <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
-    <div class="container">
+    <header>
         <h1>往月数据</h1>
-        <p class="info-text">当月过完后，会清空主页面的记录数据，并保存在此页面中。</p>
-        <div id="month-selector">
-            <!-- 月份列表将会在这里生成 -->
-        </div>
-        <div id="month-data">
-            <h2 id="month-title">月份数据</h2>
-            <div id="entries" class="card">
-                <h2>账目信息</h2>
-                <ul id="entry-list"></ul>
+        <p class="sub-header">当月过完后，数据会存储在这个页面</p> <!-- 添加提示信息 -->
+    </header>
+    <main class="container">
+        <section class="card" style="overflow-x: auto;">
+            <canvas id="spendingChart" width="800" height="400"></canvas>
+        </section>
+        <section class="card">
+            <h2>选择年份和月份</h2>
+            <div class="input-group">
+                <select id="year-select">
+                    <option value="2023">2023</option>
+                    <option value="2024">2024</option>
+                    <!-- 添加更多年份 -->
+                </select>
+                <select id="month-select">
+                    <!-- 动态生成月份选项 -->
+                </select>
+                <button class="button" onclick="loadMonthData()">加载数据</button>
             </div>
-            <div id="summary-section" class="card">
-                <h2>消费统计</h2>
-                <p>本月累计支出: ¥<span id="total-spent">0</span></p>
-                <ul id="sorted-entry-list"></ul>
-            </div>
-            <div id="budget-section" class="card">
-                <h2>每月预算设定</h2>
-                <ul id="budget-list"></ul>
-            </div>
-            <div id="redundancy-section" class="card">
-                <h2>冗余库设定</h2>
-                <p>冗余库额度: ¥<span id="redundancy-amount">0</span></p>
-            </div>
-        </div>
-        <button class="button" onclick="location.href='index.html'">返回主页</button>
-    </div>
-    <script>
-        // 应用背景图片
-        document.addEventListener("DOMContentLoaded", () => {
-            const backgroundImage = localStorage.getItem('backgroundImage');
-            if (backgroundImage) {
-                document.body.style.background = `url('${JSON.parse(backgroundImage)}') no-repeat center center fixed`;
-                document.body.style.backgroundSize = 'cover';
-            }
-        });
+        </section>
 
-        const startYear = 2023;
-        const startMonth = 10; // 用户从10月开始使用
-        const currentDate = new Date();
-        const currentYear = currentDate.getFullYear();
-        const currentMonth = currentDate.getMonth() + 1;
-
-        const monthSelector = document.getElementById('month-selector');
-        const monthData = document.getElementById('month-data');
-        const entryList = document.getElementById('entry-list');
-        const budgetList = document.getElementById('budget-list');
-        const redundancyAmountDisplay = document.getElementById('redundancy-amount');
-        const totalSpentDisplay = document.getElementById('total-spent');
-        const sortedEntryList = document.getElementById('sorted-entry-list');
-
-        for (let year = startYear; year <= currentYear; year++) {
-            for (let month = (year === startYear ? startMonth : 1); month <= (year === currentYear ? currentMonth : 12); month++) {
-                const monthButton = document.createElement('button');
-                monthButton.textContent = `${year}年${month}月`;
-                monthButton.className = 'month-link';
-                monthButton.onclick = () => displayMonthData(year, month);
-                monthSelector.appendChild(monthButton);
-            }
-        }
-
-        function displayMonthData(year, month) {
-            const monthlyData = JSON.parse(localStorage.getItem(`monthlyData-${year}-${month}`));
-
-            document.getElementById('month-title').textContent = `${year}年${month}月的数据`;
-
-            if (!monthlyData || monthlyData.entries.length === 0) {
-                monthData.innerHTML += `<p>无数据</p>`;
-                return;
-            }
-
-            // 显示账目信息
-            entryList.innerHTML = '';
-            monthlyData.entries.forEach(entry => {
-                const listItem = document.createElement('li');
-                listItem.textContent = `${entry.item}: ¥${entry.amount} （备注: ${entry.note}）`;
-                entryList.appendChild(listItem);
-            });
-
-            // 显示预算信息
-            budgetList.innerHTML = '';
-            for (let item in monthlyData.budgets) {
-                const listItem = document.createElement('li');
-                listItem.textContent = `${item}: ¥${monthlyData.budgets[item]}`;
-                budgetList.appendChild(listItem);
-            }
-
-            // 显示冗余库信息
-            redundancyAmountDisplay.textContent = monthlyData.redundancy;
-
-            // 计算并显示消费统计
-            const totals = {};
-            monthlyData.entries.forEach(entry => {
-                if (totals[entry.item]) {
-                    totals[entry.item] += entry.amount;
-                } else {
-                    totals[entry.item] = entry.amount;
-                }
-            });
-
-            const sortedEntries = Object.entries(totals).sort((a, b) => b[1] - a[1]);
-
-            sortedEntryList.innerHTML = '';
-            sortedEntries.forEach(([item, total]) => {
-                const listItem = document.createElement('li');
-                listItem.textContent = `${item}: 总金额 ¥${total}`;
-                sortedEntryList.appendChild(listItem);
-            });
-
-            // 更新累计支出
-            const totalSpent = monthlyData.entries.reduce((sum, entry) => sum + entry.amount, 0);
-            totalSpentDisplay.textContent = totalSpent;
-        }
-    </script>
+        <section id="month-data" class="card">
+            <h2>月度数据</h2>
+            <ul id="month-data-list">
+                <!-- 月度数据将会在这里显示 -->
+            </ul>
+        </section>
+        <button class="button" onclick="location.href='index.html'" aria-label="返回主页面">返回主页面</button>
+    </main>
+    <script src="script.js"></script>
 </body>
 </html>

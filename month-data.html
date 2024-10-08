@@ -1,31 +1,29 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-    <meta charset="viewport" content="width=device-width, initial-scale=1.0">
-    <title>月份数据</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>月度数据</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <div class="container">
-        <h1 id="month-title">月份数据</h1>
-        <p>这里将显示选定月份的账目信息。</p>
-        <!-- 你可以在这里添加更多内容来显示具体月份的数据 -->
-        <button class="button" onclick="location.href='past-data.html'">返回往月数据</button>
-    </div>
-    <script>
-        // 应用背景图片
-        document.addEventListener("DOMContentLoaded", () => {
-            const backgroundImage = localStorage.getItem('backgroundImage');
-            if (backgroundImage) {
-                document.body.style.background = `url('${JSON.parse(backgroundImage)}') no-repeat center center fixed`;
-                document.body.style.backgroundSize = 'cover';
-            }
-        });
-
-        const urlParams = new URLSearchParams(window.location.search);
-        const year = urlParams.get('year');
-        const month = urlParams.get('month');
-        document.getElementById('month-title').textContent = `${year}年${month}月的数据`;
-    </script>
+    <header>
+        <h1>月度数据</h1>
+    </header>
+    <main class="container">
+        <section class="card">
+            <h2>本月数据</h2>
+            <ul id="current-month-data">
+                <!-- 本月数据将会在这里显示 -->
+            </ul>
+        </section>
+        <button class="button" onclick="location.href='index.html'" aria-label="返回主页面">返回主页面</button>
+    </main>
+    <select id="year-select">
+        <option value="2023">2023</option>
+        <option value="2024">2024</option>
+        <!-- 添加更多年份 -->
+    </select>
+    <script src="script.js"></script>
 </body>
 </html>

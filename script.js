@@ -14,6 +14,8 @@ document.addEventListener("DOMContentLoaded", () => {
     updateBudgetTags();
     updateTotalSpent(); // 更新累计支出
     document.getElementById("redundancy-limit-display").textContent = redundancyLimit;
+    populateMonthSelect();
+    renderSpendingChart();
 });
 
 function addEntry() {
@@ -249,7 +251,8 @@ function updateItemTags() {
         let deleteButton = document.createElement('span');
         deleteButton.textContent = ' ×';
         deleteButton.className = 'delete-tag';
-        deleteButton.onclick = () => {
+        deleteButton.onclick = (event) => {
+            event.stopPropagation(); // 防止点击删除按钮时触发标签点击事件
             savedItems.splice(index, 1);
             saveData('savedItems', savedItems);
             updateItemTags();
@@ -276,7 +279,8 @@ function updateBudgetTags() {
         let deleteButton = document.createElement('span');
         deleteButton.textContent = ' ×';
         deleteButton.className = 'delete-tag';
-        deleteButton.onclick = () => {
+        deleteButton.onclick = (event) => {
+            event.stopPropagation(); // 防止点击删除按钮时触发标签点击事件
             savedBudgetItems.splice(index, 1);
             saveData('savedBudgetItems', savedBudgetItems);
             updateBudgetTags();
@@ -336,27 +340,39 @@ const treasuryList = document.getElementById('treasury-list');
 let totalIncome = 0; // 累计入账金额
 
 function addIncome() {
-    let description = document.getElementById("income-description").value;
-    let amount = parseFloat(document.getElementById("income-amount").value);
+    const description = document.getElementById('income-description').value;
+    const amount = parseFloat(document.getElementById('income-amount').value);
+    if (!description || isNaN(amount)) return;
 
-    if (description && !isNaN(amount) && amount > 0) {
-        // 创建新的收入项目
-        const listItem = document.createElement('li');
-        listItem.textContent = `${description}: ¥${amount}`;
-        treasuryList.appendChild(listItem);
+    const listItem = document.createElement('li');
+    listItem.textContent = `${description}: ¥${amount}`;
+    treasuryList.appendChild(listItem);
 
-        // 更新累计入账金额和小金库金额
-        totalIncome += amount;
-        treasuryAmount = totalIncome - entries.reduce((sum, entry) => sum + entry.amount, 0);
-        treasuryAmountDisplay.textContent = treasuryAmount;
+    let currentAmount = parseFloat(localStorage.getItem('treasuryAmount')) || 0;
+    currentAmount += amount;
+    localStorage.setItem('treasuryAmount', currentAmount);
+    document.getElementById('treasury-amount').textContent = currentAmount;
 
-        // 清空输入框
-        document.getElementById("income-description").value = '';
-        document.getElementById("income-amount").value = '';
-    } else {
-        alert("请输入有效的收入描述和金额");
-    }
+    // 保存收入记录
+    let incomeRecords = JSON.parse(localStorage.getItem('incomeRecords')) || [];
+    incomeRecords.push({ description, amount });
+    localStorage.setItem('incomeRecords', JSON.stringify(incomeRecords));
 }
+
+function loadTreasuryAmount() {
+    const currentAmount = parseFloat(localStorage.getItem('treasuryAmount')) || 0;
+    document.getElementById('treasury-amount').textContent = currentAmount;
+
+    // 加载收入记录
+    const incomeRecords = JSON.parse(localStorage.getItem('incomeRecords')) || [];
+    incomeRecords.forEach(record => {
+        const listItem = document.createElement('li');
+        listItem.textContent = `${record.description}: ¥${record.amount}`;
+        treasuryList.appendChild(listItem);
+    });
+}
+
+document.addEventListener('DOMContentLoaded', loadTreasuryAmount);
 
 function updateProgressBars() {
     const budgetItems = document.querySelectorAll('.budget-item');
@@ -412,3 +428,119 @@ document.addEventListener("DOMContentLoaded", () => {
     saveMonthlyData();
     // ... existing code ...
 });
+
+document.addEventListener('DOMContentLoaded', function() {
+    populateMonthSelect();
+});
+
+function populateMonthSelect() {
+    const monthSelect = document.getElementById('month-select');
+    const months = [
+        '一月', '二月', '三月', '四月', '五月', '六月',
+        '七月', '八月', '九月', '十月', '十一月', '十二月'
+    ];
+
+    months.forEach((month, index) => {
+        const option = document.createElement('option');
+        option.value = index + 1; // 假设月份从1开始
+        option.textContent = month;
+        monthSelect.appendChild(option);
+    });
+}
+
+function loadMonthData() {
+    const yearSelect = document.getElementById('year-select');
+    const monthSelect = document.getElementById('month-select');
+    const selectedYear = yearSelect.value;
+    const selectedMonth = monthSelect.value;
+    if (!selectedYear || !selectedMonth) {
+        alert('请选择一个年份和月份');
+        return;
+    }
+
+    // 假设有一个函数 fetchMonthData 用于获取数据
+    fetchMonthData(selectedYear, selectedMonth).then(data => {
+        displayMonthData(data);
+    }).catch(error => {
+        console.error('加载数据时出错:', error);
+    });
+}
+
+function fetchMonthData(month) {
+    // 模拟异步数据获取
+    return new Promise((resolve, reject) => {
+        // 使用 mock-data.js 中的数据
+        const data = mockData[month];
+        if (data) {
+            resolve(data);
+        } else {
+            reject('没有找到数据');
+        }
+    });
+}
+
+function displayMonthData(data) {
+    const monthDataList = document.getElementById('month-data-list');
+    monthDataList.innerHTML = ''; // 清空现有数据
+
+    data.forEach(entry => {
+        const li = document.createElement('li');
+        li.textContent = `${entry.date}: ${entry.amount} 元 - ${entry.description}`;
+        monthDataList.appendChild(li);
+    });
+}
+
+function renderSpendingChart() {
+    const ctx = document.getElementById('spendingChart').getContext('2d');
+
+    // 获取用户记录的数据
+    const monthlySpending = Array(12).fill(0); // 初始化每月支出为0
+    entries.forEach(entry => {
+        // 假设每个entry有一个date属性
+        const entryDate = new Date(entry.date);
+        const month = entryDate.getMonth(); // 获取月份（0-11）
+        monthlySpending[month] += entry.amount; // 累加每月支出
+    });
+
+    const chart = new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: ['一月', '二月', '三月', '四月', '五月', '六月', '七月', '八月', '九月', '十月', '十一月', '十二月'],
+            datasets: [{
+                label: '当月支出 (元)',
+                data: monthlySpending,
+                borderColor: 'rgba(75, 192, 192, 1)',
+                backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                fill: true,
+                tension: 0.1
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+                x: {
+                    type: 'category',
+                    labels: ['一月', '二月', '三月', '四月', '五月', '六月', '七月', '八月', '九月', '十月', '十一月', '十二月'],
+                    ticks: {
+                        autoSkip: false
+                    }
+                },
+                y: {
+                    beginAtZero: true,
+                    title: {
+                        display: true,
+                        text: '支出 (元)'
+                    }
+                }
+            },
+            plugins: {
+                legend: {
+                    display: true
+                }
+            }
+        }
+    });
+}
+
+document.addEventListener('DOMContentLoaded', renderSpendingChart);

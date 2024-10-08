@@ -1,83 +1,85 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-    <meta charset="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>记账系统</title>
     <link rel="stylesheet" href="style.css">
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;500&display=swap" rel="stylesheet">
 </head>
 <body>
-    <div class="container">
+    <header>
         <h1 id="header-title">个人记账系统</h1>
-        <div id="name-section" class="card">
+    </header>
+    <main class="container">
+        <section id="name-section" class="card">
             <input type="text" id="user-name" placeholder="请输入您的名字">
-            <button class="button" onclick="setUserName()">设置名字</button>
-        </div>
+            <button class="button" onclick="setUserName()" aria-label="设置名字">设置名字</button>
+        </section>
 
-        <div id="background-section" class="card">
+        <section id="background-section" class="card">
             <h2>设置背景图片</h2>
             <input type="file" id="background-upload" accept="image/*">
-            <button class="button" onclick="setBackgroundImage()">上传并设置背景</button>
-        </div>
+            <button class="button" onclick="setBackgroundImage()" aria-label="上传并设置背景">上传并设置背景</button>
+        </section>
 
-        <div id="input-section" class="card">
+        <section id="input-section" class="card">
             <div class="input-group">
-                <input type="text" id="item" placeholder="账目项目" onfocus="showItemTags()" onblur="hideItemTags()">
+                <input type="text" id="item" placeholder="账目大类（关联于预算设定中的项目大类）" onfocus="showItemTags()" onblur="hideItemTags()">
                 <div id="item-tags" class="tags-container"></div>
             </div>
             <input type="number" id="amount" placeholder="金额">
-            <input type="text" id="note" placeholder="备注">
-            <button class="button" onclick="addEntry()">添加账目</button>
-        </div>
+            <input type="text" id="note" placeholder="具体事项">
+            <button class="button" onclick="addEntry()" aria-label="添加账目">添加账目</button>
+        </section>
 
-        <div id="budget-section" class="card">
+        <section id="budget-section" class="card">
             <h2>每月预算设定</h2>
             <div class="input-group">
-                <input type="text" id="budget-item" placeholder="预算项目" onfocus="showBudgetTags()" onblur="hideBudgetTags()">
+                <input type="text" id="budget-item" placeholder="账目大类" onfocus="showBudgetTags()" onblur="hideBudgetTags()">
                 <div id="budget-tags" class="tags-container"></div>
             </div>
             <input type="number" id="budget-limit" placeholder="预算额度">
-            <button class="button" onclick="setBudget()">设定预算</button>
+            <button class="button" onclick="setBudget()" aria-label="设定预算">设定预算</button>
             <ul id="budget-list">
                 <!-- 每个预算项目将会在这里显示 -->
             </ul>
-        </div>
+        </section>
 
-        <div id="redundancy-section" class="card">
+        <section id="redundancy-section" class="card">
             <h2>冗余库设定</h2>
             <input type="number" id="redundancy-limit" placeholder="设置冗余库额度">
-            <button class="button" onclick="setRedundancyLimit()">设定冗余库额度</button>
+            <button class="button" onclick="setRedundancyLimit()" aria-label="设定冗余库额度">设定冗余库额度</button>
             <p>当前冗余库额度: ¥<span id="redundancy-amount">0</span>/<span id="redundancy-limit-display">300</span></p>
-        </div>
+        </section>
 
-        <div id="entries" class="card">
+        <section id="entries" class="card">
             <h2>账目信息</h2>
             <ul id="entry-list"></ul>
-        </div>
+        </section>
 
-        <div id="summary-section" class="card">
+        <section id="summary-section" class="card">
             <h2>消费统计</h2>
             <p>本月累计支出: ¥<span id="total-spent">0</span></p>
-            <button class="button" onclick="sortEntriesByTotal()">按项目总金额排序</button>
+            <button class="button" onclick="sortEntriesByTotal()" aria-label="按项目大类总金额排序">按项目大类总金额排序</button>
             <ul id="sorted-entry-list"></ul>
-        </div>
+        </section>
 
-        <div id="treasury-section" class="card">
+        <section id="treasury-section" class="card">
             <h2>小金库</h2>
             <div class="input-group">
                 <input type="text" id="income-description" placeholder="收入描述">
                 <input type="number" id="income-amount" placeholder="收入金额">
-                <button class="button" onclick="addIncome()">记录收入</button>
+                <button class="button" onclick="addIncome()" aria-label="记录收入">记录收入</button>
             </div>
             <ul id="treasury-list"></ul>
             <p>小金库金额: <span id="treasury-amount">0</span> 元</p>
-        </div>
+        </section>
 
-        <!-- 添加查看往月数据的按钮 -->
-        <div class="card">
-            <button class="button" onclick="location.href='past-data.html'">查看往月数据</button>
-        </div>
-    </div>
+        <section class="card">
+            <button class="button" onclick="location.href='past-data.html'" aria-label="查看往月数据">查看往月数据</button>
+        </section>
+    </main>
     <script src="script.js"></script>
 </body>
 </html>

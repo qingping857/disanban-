@@ -10,17 +10,18 @@ body {
     align-items: center;
     min-height: 100vh;
     transition: background 0.5s ease-in-out;
-    flex-direction: column; /* 确保在小屏幕上垂直排列 */
+    flex-direction: column;
 }
 
 .container {
+    display: flex;
+    flex-direction: column;
+    padding: 10px;
     background: rgba(255, 255, 255, 0.85);
-    padding: 20px;
     border-radius: 15px;
     box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
     max-width: 800px;
-    width: 100%; /* 确保在小屏幕上占满宽度 */
-    padding: 10px; /* 减少内边距以适应小屏幕 */
+    width: 100%;
 }
 
 h1 {
@@ -30,70 +31,41 @@ h1 {
 }
 
 .card {
-    background: #fff;
-    padding: 20px;
-    border-radius: 10px;
-    margin-bottom: 10px; /* 减少卡片之间的间距 */
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    background-color: #f9f9f9;
+    margin-bottom: 10px;
+    padding: 15px;
+    border-radius: 5px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    /* overflow-x: auto; */ /* 确保这行被移除 */
 }
 
 .input-group {
+    display: flex;
+    flex-direction: column;
     position: relative;
-    margin-bottom: 8px; /* 确保输入组之间有足够的间距 */
+    margin-bottom: 8px;
 }
 
 input[type="text"],
 input[type="number"],
 input[type="file"] {
-    width: 100%; /* 确保输入框在小屏幕上占满宽度 */
+    width: 100%;
     padding: 10px;
     margin-bottom: 10px;
     border: 1px solid #ddd;
     border-radius: 5px;
 }
 
-.tags-container {
-    display: none;
-    position: absolute;
-    top: 100%;
-    left: 0;
-    right: 0;
-    background: #fff;
-    border: 1px solid #ddd;
-    border-radius: 5px;
-    max-height: 150px;
-    overflow-y: auto;
-    z-index: 10;
-}
-
-.tag-item {
-    padding: 10px;
-    cursor: pointer;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
-
-.tag-item:hover {
-    background-color: #ffebee;
-}
-
-.delete-tag {
-    margin-left: 10px;
-    color: red;
-    cursor: pointer;
-}
-
 .button {
-    display: inline-block;
-    background: #ff6b81;
-    color: #fff;
-    padding: 10px;
+    background-color: #007bff;
+    color: white;
     border: none;
-    border-radius: 5px;
+    padding: 8px 16px; /* 调整按钮的内边距 */
+    font-size: 14px;   /* 调整按钮的字体大小 */
+    border-radius: 4px; /* 调整按钮的圆角 */
     cursor: pointer;
     transition: background 0.3s ease;
-    width: 100%; /* 确保按钮在小屏幕上占满宽度 */
+    width: 100%;
 }
 
 .button:hover {
@@ -114,75 +86,101 @@ p {
     margin: 0;
 }
 
-.progress-bar {
-    width: 100%;
-    background-color: #e0e0e0;
-    border-radius: 5px;
-    overflow: hidden;
-    height: 20px;
-    margin-top: 5px;
-}
-
-.progress {
-    height: 100%;
-    background-color: #76c7c0;
-    width: 0; /* 初始宽度为0，稍后通过JS更新 */
-    transition: width 0.3s ease;
-}
-
-.month-link {
-    display: inline-block;
-    margin: 5px;
-    padding: 10px 15px;
-    background-color: #76c7c0;
-    color: white;
-    text-decoration: none;
-    border-radius: 5px;
-    transition: background-color 0.3s ease;
-    width: calc(50% - 10px); /* 在小屏幕上每行显示两个按钮 */
-    margin: 5px; /* 确保按钮之间有间距 */
-}
-
-.month-link:hover {
-    background-color: #5aa8a0;
-}
-
-.info-text {
-    font-size: 1em;
-    color: #555;
-    background-color: #f9f9f9;
-    padding: 10px;
-    border-left: 4px solid #76c7c0;
-    margin-bottom: 20px;
-    border-radius: 5px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    font-size: 0.9em; /* 调整提示信息的文本大小 */
-}
-
 @media (max-width: 600px) {
     h1, h2 {
-        font-size: 1.5em; /* 调整标题大小以适应小屏幕 */
+        font-size: 1.5em;
     }
 
     p, li {
-        font-size: 1em; /* 调整文本大小以适应小屏幕 */
-    }
-
-    .info-text {
-        font-size: 0.9em; /* 调整提示信息的文本大小 */
+        font-size: 1em;
     }
 
     input[type="text"],
     input[type="number"],
     input[type="file"] {
-        font-size: 1em; /* 确保输入框内的字体大小适中 */
+        font-size: 1em;
     }
 
     .button {
-        font-size: 1em; /* 确保按钮内的字体大小适中 */
+        font-size: 1em;
     }
 
     body {
-        font-size: 16px; /* 调整为适合移动设备的基础字体大小 */
+        font-size: 16px;
     }
+}
+
+@media (min-width: 600px) {
+    .container {
+        flex-direction: row;
+        flex-wrap: wrap;
+    }
+
+    .card {
+        flex: 1 1 calc(50% - 20px);
+        margin: 10px;
+    }
+}
+
+.small-button {
+    padding: 6px 12px; /* 调整内边距以适应页面风格 */
+    font-size: 14px;   /* 调整字体大小 */
+    border-radius: 3px; /* 调整圆角 */
+    background-color: #007bff; /* 确保颜色与其他按钮一致 */
+    color: white;
+    border: none;
+    cursor: pointer;
+    transition: background 0.3s ease;
+    width: auto; /* 确保按钮宽度自动适应内容 */
+}
+
+.small-button:hover {
+    background: #ff4c61; /* 确保悬停效果与其他按钮一致 */
+}
+
+.tag-item {
+    display: inline-block;
+    background-color: #e0e0e0;
+    color: #333;
+    padding: 5px 10px;
+    margin: 5px;
+    border-radius: 15px;
+    font-size: 12px;
+    position: relative;
+    cursor: pointer;
+    transition: background 0.3s ease;
+}
+
+.tag-item:hover {
+    background-color: #d0d0d0;
+}
+
+.delete-tag {
+    margin-left: 8px;
+    color: #ff4c61;
+    cursor: pointer;
+    font-weight: bold;
+    position: absolute;
+    right: 5px;
+    top: 50%;
+    transform: translateY(-50%);
+    transition: color 0.3s ease;
+}
+
+.delete-tag:hover {
+    color: #ff0000;
+}
+
+.tags-container {
+    display: flex;
+    flex-wrap: wrap;
+    margin-top: 5px;
+}
+
+.sub-header {
+    text-align: center;
+    font-size: 0.9em;
+    color: #666;
+    margin-top: -10px;
+    margin-bottom: 20px;
 }

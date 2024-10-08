@@ -30,3 +30,14 @@
 
     console.log(`Mock data for ${year}-${month} has been added to localStorage.`);
 })();
+
+const mockData = {
+    1: [
+        { date: '2023-01-01', amount: 100, description: '新年礼物' },
+        { date: '2023-01-15', amount: 200, description: '购物' }
+    ],
+    2: [
+        { date: '2023-02-10', amount: 150, description: '情人节礼物' }
+    ],
+    // 其他月份的数据...
+};
